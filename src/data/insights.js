@@ -1,0 +1,42 @@
+export const insights = [
+  {
+    id: 1,
+    type: 'blocked',
+    title: 'Authentication workflow blocked',
+    body: 'OAuth integration is waiting on API spec approval. 2 downstream tasks are stalled.',
+    action: 'Resolve blocker',
+    confidence: 92,
+  },
+  {
+    id: 2,
+    type: 'workload',
+    title: 'High workload detected',
+    body: 'You have 6 active context threads across 3 workspaces. Consider consolidating Launch HQ.',
+    action: 'Review load',
+    confidence: 88,
+  },
+  {
+    id: 3,
+    type: 'conflict',
+    title: 'Deadline conflict detected',
+    body: 'Beta ship date overlaps with investor sync prep. Both require deep work blocks.',
+    action: 'Adjust schedule',
+    confidence: 85,
+  },
+  {
+    id: 4,
+    type: 'pattern',
+    title: 'Most productive between 9–12 AM',
+    body: 'Focus score averages 91 during mid-week mornings. Protect this window for critical work.',
+    action: 'Block calendar',
+    confidence: 94,
+  },
+  {
+    id: 5,
+    type: 'dependency',
+    title: 'Frontend task dependency unresolved',
+    body: 'API layer cannot proceed until OAuth integration completes. Estimated 2d delay.',
+    action: 'View dependency',
+    confidence: 90,
+  },
+]
