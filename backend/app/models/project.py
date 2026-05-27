@@ -12,6 +12,9 @@ class Project(Base):
     title = Column(String(255), nullable=False)
     description = Column(Text)
     status = Column(String(64), default='active')
+    color = Column(String(64), default='indigo')
+    members = Column(String(255), default='[]') # stored as JSON string
+    context_nodes = Column(Integer, default=0)
     deadline = Column(DateTime, nullable=True)
     risk_score = Column(Float, default=0.0)
     progress = Column(Integer, default=0)

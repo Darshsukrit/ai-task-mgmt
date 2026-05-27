@@ -9,11 +9,26 @@ router = APIRouter(prefix="/projects", tags=["projects"])
 
 @router.get('/', response_model=List[dict])
 def list_projects(db: Session = Depends(get_db)):
+    import json
     items = db.query(Project).all()
-    return [
-        {"id": p.id, "title": p.title, "status": p.status, "progress": p.progress}
-        for p in items
-    ]
+    result = []
+    for p in items:
+        try:
+            members = json.loads(p.members)
+        except:
+            members = []
+        result.append({
+            "id": p.id,
+            "name": p.title,
+            "title": p.title,
+            "description": p.description,
+            "status": p.status,
+            "progress": p.progress,
+            "color": p.color,
+            "members": members,
+            "contextNodes": p.context_nodes,
+        })
+    return result
 
 
 @router.post('/', response_model=dict)

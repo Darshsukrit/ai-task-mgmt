@@ -1,11 +1,11 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { MoreHorizontal, GitBranch } from 'lucide-react'
 import Card, { CardHeader } from '../ui/Card'
 import Avatar from '../ui/Avatar'
 import Badge from '../ui/Badge'
-import { projects } from '../../data/mockData'
 import { getMotionProps } from '../../constants/animations'
+import { apiGet } from '../../utils/api'
 
 const statusLabel = {
   active: { label: 'Active', variant: 'accent' },
@@ -21,6 +21,20 @@ const colorBar = {
 }
 
 function ProjectCards() {
+  const [projects, setProjects] = useState([])
+
+  useEffect(() => {
+    async function fetchProjects() {
+      try {
+        const data = await apiGet('/projects/')
+        setProjects(data)
+      } catch (err) {
+        console.error(err)
+      }
+    }
+    fetchProjects()
+  }, [])
+
   return (
     <div>
       <CardHeader
@@ -38,7 +52,7 @@ function ProjectCards() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {projects.map((project, i) => {
-          const status = statusLabel[project.status]
+          const status = statusLabel[project.status] || { label: project.status, variant: 'default' }
           return (
             <motion.div
               key={project.id}
