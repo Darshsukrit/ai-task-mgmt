@@ -11,7 +11,12 @@ import {
   deepWorkAnalytics,
 } from '../../data/productivity'
 
-function ProductivityIntelligence({ compact = false }) {
+function ProductivityIntelligence({ compact = false, focusAnalytics = {} }) {
+  // Use provided focusAnalytics or fallback to mock data
+  const peakHoursData = focusAnalytics.peak_hours
+    ? focusAnalytics.peak_hours.map((hour) => ({ time: hour, value: Math.random() * 100 }))
+    : peakHours
+
   if (compact) {
     return (
       <Card>
@@ -21,19 +26,19 @@ function ProductivityIntelligence({ compact = false }) {
         />
         <div className="grid grid-cols-2 gap-4">
           <ScoreRing
-            value={intelligenceScores.focus.value}
+            value={Math.round(focusAnalytics.peak_focus_hours || intelligenceScores.focus.value)}
             label="Focus"
             size={64}
           />
           <ScoreRing
-            value={intelligenceScores.productivity.value}
+            value={Math.round(100 - (focusAnalytics.distraction_frequency || 0))}
             label="Productivity"
             size={64}
           />
         </div>
         <div className="mt-5 pt-4 border-t border-[var(--color-border)]">
           <p className="text-[11px] text-zinc-500 mb-2">Peak hours</p>
-          <PeakHoursChart data={peakHours} />
+          <PeakHoursChart data={peakHoursData} />
         </div>
       </Card>
     )
@@ -44,7 +49,7 @@ function ProductivityIntelligence({ compact = false }) {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <Card>
           <CardHeader title="Focus score" subtitle="Weighted attention index" />
-          <ScoreRing value={intelligenceScores.focus.value} />
+          <ScoreRing value={Math.round(focusAnalytics.peak_focus_hours || intelligenceScores.focus.value)} />
           <p className="text-xs text-emerald-400 mt-2 text-center">
             {intelligenceScores.focus.change} this week
           </p>

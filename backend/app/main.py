@@ -7,6 +7,10 @@ from app.routes import tasks as tasks_router
 from app.routes import workspaces as workspaces_router
 from app.routes import analytics as analytics_router
 from app.routes import intelligence as intelligence_router
+from app.routes import notes as notes_router
+from app.routes import goals as goals_router
+from app.routes import calendar as calendar_router
+from app.routes import dashboard as dashboard_router
 
 def create_app() -> FastAPI:
     app = FastAPI(title='ContextOS API')
@@ -28,6 +32,10 @@ def create_app() -> FastAPI:
     app.include_router(workspaces_router.router)
     app.include_router(analytics_router.router)
     app.include_router(intelligence_router.router)
+    app.include_router(notes_router.router)
+    app.include_router(goals_router.router)
+    app.include_router(calendar_router.router)
+    app.include_router(dashboard_router.router)
 
     return app
 
@@ -43,6 +51,9 @@ def on_startup():
     import app.models.workspace
     import app.models.project
     import app.models.task
+    import app.models.note
+    import app.models.goal
+    import app.models.event
     import app.models.task_dependency
     import app.models.productivity_log
     import app.models.activity

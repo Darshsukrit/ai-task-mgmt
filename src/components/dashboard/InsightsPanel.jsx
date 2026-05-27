@@ -2,15 +2,25 @@ import { Sparkles } from 'lucide-react'
 import Card, { CardHeader } from '../ui/Card'
 import Badge from '../ui/Badge'
 import InsightCard from '../intelligence/InsightCard'
-import { insights } from '../../data/mockData'
 
 const DASHBOARD_INSIGHT_LIMIT = 3
 
 export default function InsightsPanel({
+  insights = [],
   limit = DASHBOARD_INSIGHT_LIMIT,
   showMoreHint = false,
 }) {
   const visible = limit ? insights.slice(0, limit) : insights
+
+  // Transform API response to match InsightCard format
+  const formattedInsights = visible.map((insight) => ({
+    id: insight.id,
+    title: insight.title,
+    description: insight.description,
+    type: insight.type || 'insight',
+    confidence: insight.confidence || 0.8,
+    created_at: insight.created_at,
+  }))
 
   return (
     <Card className="h-full">
@@ -26,11 +36,17 @@ export default function InsightsPanel({
       />
 
       <ul className="space-y-3">
-        {visible.map((insight) => (
-          <li key={insight.id}>
-            <InsightCard insight={insight} />
+        {formattedInsights.length === 0 ? (
+          <li className="py-4 text-center text-xs text-zinc-600">
+            No insights yet
           </li>
-        ))}
+        ) : (
+          formattedInsights.map((insight) => (
+            <li key={insight.id}>
+              <InsightCard insight={insight} />
+            </li>
+          ))
+        )}
       </ul>
       {showMoreHint && limit && insights.length > limit && (
         <p className="text-[11px] text-zinc-600 mt-3 text-center">

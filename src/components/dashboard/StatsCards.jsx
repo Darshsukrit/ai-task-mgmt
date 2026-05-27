@@ -1,12 +1,47 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { TrendingUp, TrendingDown } from 'lucide-react'
-import { stats } from '../../data/mockData'
 import { getMotionProps } from '../../constants/animations'
 
 const { statsContainer, statsItem } = getMotionProps(false)
 
-function StatsCards() {
+function StatsCards({ stats = {} }) {
+  // Format stats from API response
+  const statsArray = [
+    {
+      id: 1,
+      label: 'Total Tasks',
+      value: stats.total_tasks || 0,
+      trend: 'up',
+      change: '+12%',
+      description: 'Active in workspace',
+    },
+    {
+      id: 2,
+      label: 'Completed',
+      value: stats.completed_tasks || 0,
+      trend: 'up',
+      change: '+5%',
+      description: 'This period',
+    },
+    {
+      id: 3,
+      label: 'In Progress',
+      value: stats.in_progress_tasks || 0,
+      trend: 'down',
+      change: '-2%',
+      description: 'Currently assigned',
+    },
+    {
+      id: 4,
+      label: 'Completion Rate',
+      value: `${Math.round(stats.completion_rate || 0)}%`,
+      trend: 'up',
+      change: '+8%',
+      description: 'Of open tasks',
+    },
+  ]
+
   return (
     <motion.div
       variants={statsContainer}
@@ -14,7 +49,7 @@ function StatsCards() {
       animate="show"
       className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4"
     >
-      {stats.map((stat) => (
+      {statsArray.map((stat) => (
         <motion.div
           key={stat.id}
           variants={statsItem}

@@ -1,8 +1,14 @@
 import Card, { CardHeader } from '../ui/Card'
 import MiniBarChart from '../ui/MiniBarChart'
-import { analyticsSeries } from '../../data/mockData'
 
-export default function GraphSection() {
+export default function GraphSection({ data = [] }) {
+  // Transform API data to match MiniBarChart format
+  const chartData = (data || []).map((item) => ({
+    day: item.date,
+    focus: item.focused_hours || 0,
+    context: item.tasks || 0,
+  }))
+
   return (
     <Card className="h-full min-h-[280px]">
       <CardHeader
@@ -22,7 +28,7 @@ export default function GraphSection() {
         }
       />
       <MiniBarChart
-        data={analyticsSeries}
+        data={chartData}
         keys={['focus', 'context']}
         labelKey="day"
         height={160}
