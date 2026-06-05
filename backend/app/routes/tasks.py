@@ -10,7 +10,7 @@ router = APIRouter(prefix="/tasks", tags=["tasks"])
 @router.get('/', response_model=List[dict])
 def list_tasks(db: Session = Depends(get_db)):
     items = db.query(Task).all()
-    return [{"id": t.id, "title": t.title, "status": t.status} for t in items]
+    return [{"id": t.id, "title": t.title, "status": t.status, "project_id": t.project_id} for t in items]
 
 
 @router.post('/', response_model=dict)

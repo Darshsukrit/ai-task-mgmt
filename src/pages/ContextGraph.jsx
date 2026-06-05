@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense, useEffect, useState } from 'react'
 import PageHeader from '../components/ui/PageHeader'
 import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
@@ -9,6 +9,7 @@ import { useGraphFilter } from '../hooks/useGraphFilter'
 import { contextGraphNodes, contextGraphEdges } from '../data/graph'
 import { GitBranch, Filter } from 'lucide-react'
 import ErrorBoundary from '../components/ui/ErrorBoundary'
+import { apiGet } from '../utils/api'
 
 const ContextFlowGraph = lazy(
   () => import('../components/context-graph/ContextFlowGraph')
@@ -26,8 +27,70 @@ function GraphLoader() {
 }
 
 export default function ContextGraph() {
+  const [nodes, setNodes] = useState(contextGraphNodes)
+  const [edges, setEdges] = useState(contextGraphEdges)
+  const [isLoadingGraph, setIsLoadingGraph] = useState(true)
+
   const { activeCategories, toggleCategory, filteredNodes, filteredEdges } =
-    useGraphFilter(contextGraphNodes, contextGraphEdges)
+    useGraphFilter(nodes, edges)
+
+  useEffect(() => {
+    async function fetchGraphData() {
+      try {
+        const [projects, tasks] = await Promise.all([
+          apiGet('/projects/'),
+          apiGet('/tasks/'),
+        ])
+
+        if (projects?.length || tasks?.length) {
+          const projectNodes = (projects || []).map((project, index) => ({
+            id: `project-${project.id}`,
+            type: 'context',
+            position: { x: index * 240, y: 0 },
+            data: {
+              label: project.title || project.name,
+              category: 'project',
+              status: project.status || 'active',
+            },
+          }))
+
+          const taskNodes = (tasks || []).map((task, index) => ({
+            id: `task-${task.id}`,
+            type: 'context',
+            position: {
+              x: (index % 6) * 180,
+              y: 180 + Math.floor(index / 6) * 160,
+            },
+            data: {
+              label: task.title,
+              category: 'task',
+              status: task.status,
+            },
+          }))
+
+          const projectTaskEdges = (tasks || [])
+            .filter((task) => task.project_id)
+            .map((task, index) => ({
+              id: `project-${task.project_id}-task-${task.id}`,
+              source: `project-${task.project_id}`,
+              target: `task-${task.id}`,
+              type: 'dependency',
+              animated: true,
+              data: { kind: 'dependency' },
+            }))
+
+          setNodes([...projectNodes, ...taskNodes])
+          setEdges(projectTaskEdges)
+        }
+      } catch (error) {
+        console.error('Failed to load graph data:', error)
+      } finally {
+        setIsLoadingGraph(false)
+      }
+    }
+
+    fetchGraphData()
+  }, [])
 
   return (
     <div className="h-[calc(100vh-8rem)] flex flex-col">
@@ -48,6 +111,9 @@ export default function ContextGraph() {
 
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-4 gap-6 min-h-0">
         <div className="lg:col-span-3 min-h-[480px]">
+          {isLoadingGraph ? (
+            <GraphLoader />
+          ) : (
             <ErrorBoundary>
               <Suspense fallback={<GraphLoader />}>
                 <ContextFlowGraph
@@ -57,11 +123,12 @@ export default function ContextGraph() {
                 />
               </Suspense>
             </ErrorBoundary>
+          )}
         </div>
 
         <div className="space-y-4 overflow-y-auto">
           <Card padding="sm">
-            <GraphStats />
+            <GraphStats nodes={filteredNodes} edges={filteredEdges} />
           </Card>
           <Card padding="sm">
             <GraphLegend

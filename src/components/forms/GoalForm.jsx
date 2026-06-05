@@ -48,7 +48,7 @@ export default function GoalForm({ workspaceId, userId, onSubmit, onClose }) {
         status: 'active',
         progress: 0,
       }
-      const response = await apiPost('/goals', payload)
+      const response = await apiPost('/goals/', payload)
       onSubmit(response)
       onClose()
     } catch (error) {

@@ -54,6 +54,7 @@ def get_goal(goal_id: int, db: Session = Depends(get_db)):
     }
 
 
+@router.post('', response_model=dict)
 @router.post('/', response_model=dict)
 def create_goal(payload: dict, db: Session = Depends(get_db)):
     """Create a new goal"""

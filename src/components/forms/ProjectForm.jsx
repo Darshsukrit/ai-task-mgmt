@@ -41,7 +41,7 @@ export default function ProjectForm({ workspaceId, userId, onSubmit, onClose }) 
         title: formData.title,
         description: formData.description,
       }
-      const response = await apiPost('/projects', payload)
+      const response = await apiPost('/projects/', payload)
       onSubmit(response)
       onClose()
     } catch (error) {

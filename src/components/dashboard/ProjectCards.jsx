@@ -20,7 +20,7 @@ const colorBar = {
   amber: 'from-amber-500 to-amber-400',
 }
 
-function ProjectCards() {
+function ProjectCards({ refreshKey }) {
   const [projects, setProjects] = useState([])
 
   useEffect(() => {
@@ -33,7 +33,7 @@ function ProjectCards() {
       }
     }
     fetchProjects()
-  }, [])
+  }, [refreshKey])
 
   return (
     <div>

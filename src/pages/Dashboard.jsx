@@ -16,6 +16,7 @@ export default function Dashboard() {
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [projectRefreshKey, setProjectRefreshKey] = useState(false)
   const workspaceId = 1 // TODO: Get from context/auth
   const userId = 1 // TODO: Get from context/auth
 
@@ -37,6 +38,7 @@ export default function Dashboard() {
 
   const handleProjectCreated = () => {
     fetchDashboardData() // Refetch dashboard data after creation
+    setProjectRefreshKey((prev) => !prev)
   }
 
   if (loading) {
@@ -86,7 +88,7 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-6">
         <div className="xl:col-span-2 space-y-6">
           <GraphSection data={data?.analytics_series} />
-          <ProjectCards />
+          <ProjectCards refreshKey={projectRefreshKey} />
         </div>
         <div className="space-y-6">
           <InsightsPanel insights={insights} limit={3} showMoreHint />

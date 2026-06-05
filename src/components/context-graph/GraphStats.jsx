@@ -1,11 +1,18 @@
 import { graphSummary } from '../../data/graph'
 
-export default function GraphStats() {
+export default function GraphStats({ nodes, edges }) {
+  const summary = nodes && edges ? {
+    nodes: nodes.length,
+    relationships: edges.length,
+    blockedPaths: edges.filter((e) => e.data?.kind === 'blocks' || e.data?.kind === 'blocked').length,
+    activeDependencies: edges.filter((e) => e.data?.kind === 'dependency').length,
+  } : graphSummary
+
   const items = [
-    { label: 'Nodes', value: graphSummary.nodes },
-    { label: 'Relationships', value: graphSummary.relationships },
-    { label: 'Blocked paths', value: graphSummary.blockedPaths },
-    { label: 'Dependencies', value: graphSummary.activeDependencies },
+    { label: 'Nodes', value: summary.nodes },
+    { label: 'Relationships', value: summary.relationships },
+    { label: 'Blocked paths', value: summary.blockedPaths },
+    { label: 'Dependencies', value: summary.activeDependencies },
   ]
 
   return (

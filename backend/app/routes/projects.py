@@ -31,6 +31,7 @@ def list_projects(db: Session = Depends(get_db)):
     return result
 
 
+@router.post('', response_model=dict)
 @router.post('/', response_model=dict)
 def create_project(payload: dict, db: Session = Depends(get_db)):
     title = payload.get('title') or payload.get('name')
