@@ -33,7 +33,24 @@ def list_projects(db: Session = Depends(get_db)):
 
 @router.post('/', response_model=dict)
 def create_project(payload: dict, db: Session = Depends(get_db)):
-    p = Project(**payload)
+    title = payload.get('title') or payload.get('name')
+    if not payload.get('workspace_id') or not title:
+        raise HTTPException(status_code=400, detail="Missing required fields: workspace_id, title")
+
+    project_data = {
+        'workspace_id': payload['workspace_id'],
+        'title': title,
+        'description': payload.get('description', ''),
+        'status': payload.get('status', 'active'),
+        'color': payload.get('color', 'indigo'),
+        'members': payload.get('members', '[]'),
+        'context_nodes': payload.get('context_nodes', 0),
+        'deadline': payload.get('deadline'),
+        'risk_score': payload.get('risk_score', 0.0),
+        'progress': payload.get('progress', 0),
+    }
+
+    p = Project(**project_data)
     db.add(p)
     db.commit()
     db.refresh(p)

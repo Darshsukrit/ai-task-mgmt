@@ -7,7 +7,7 @@ import { apiPost } from '../../utils/api'
 
 export default function ProjectForm({ workspaceId, userId, onSubmit, onClose }) {
   const [formData, setFormData] = useState({
-    name: '',
+    title: '',
     description: '',
   })
   const [errors, setErrors] = useState({})
@@ -38,7 +38,8 @@ export default function ProjectForm({ workspaceId, userId, onSubmit, onClose }) 
       const payload = {
         workspace_id: workspaceId,
         user_id: userId,
-        ...formData,
+        title: formData.title,
+        description: formData.description,
       }
       const response = await apiPost('/projects', payload)
       onSubmit(response)
@@ -54,11 +55,11 @@ export default function ProjectForm({ workspaceId, userId, onSubmit, onClose }) 
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       <Input
         label="Project Name"
-        name="name"
+        name="title"
         placeholder="Enter project name"
-        value={formData.name}
+        value={formData.title}
         onChange={handleChange}
-        error={errors.name}
+        error={errors.title}
         required
       />
 
